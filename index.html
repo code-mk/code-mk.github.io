@@ -22,13 +22,14 @@
       width: 20%;
       padding: 10px;
       box-sizing: border-box;
-      border: 1px solid #000000;
+      border: 0px solid #000000;
       height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: orange;
       font-family: monospace;
+      z-index: 10;
     }
 
     .flex-item:nth-child(2),
@@ -71,6 +72,15 @@
         background-color: #111111;
     }
 
+    .square {
+        width: 50px;
+        height: 50px;
+        background-color: orange;
+        position: absolute;
+        z-index: 5;
+        opacity: 30%;
+    }
+
   </style>
 </head>
 <body>
@@ -86,9 +96,88 @@
         <div class="flex-item"></div>
         <div class="flex-item">Welcome to CodeMk. A collection of tools for analysing your team's development practices.</div>
         <div class="flex-item">
-          <img src="logo.png" alt="Image">
+          <img src="logo.png" alt="Image" style="z-index: 10;">
         </div>
         <div class="flex-item"></div>
     </div>
+    <div class="square" id="square1"></div>
+    <div class="square" id="square2"></div>
+    <div class="square" id="square3"></div>
+    <div class="square" id="square4"></div>
+    <div class="square" id="square5"></div>
+
+    <script>
+        // Get the square element
+        var square = document.querySelector('.square');
+    
+        // Set initial position and velocity
+        var x = 0;
+        var y = 50;
+        var vx = 1;
+        var vy = 1;
+
+        var squares = [];
+        var squareCount = 5;
+        for(x=0; x<squareCount;x++){
+            squares.push(
+                {
+                    id: "square" + (x+1),
+                    x: getRandomInt(window.innerWidth - 10),
+                    y: getRandomInt(window.innerWidth - 10) + 50,
+                    vx: 1 + getRandomInt(2),
+                    vy: 1 + getRandomInt(2)
+                });
+        }
+
+        function getRandomInt(max) {
+          return Math.floor(Math.random() * max);
+        }
+
+    
+        // Function to update position and check for collisions
+        function update() {
+
+            squares.forEach(square => {
+
+                var sq = document.getElementById(square.id);
+                if(sq){
+                    square.x += square.vx;
+                    square.y += square.vy;
+
+                    if (square.x <= 0 || square.x >= window.innerWidth - 10) {
+                        square.vx *= -1; 
+                    }
+
+                    if (square.y <= 50 || square.y >= window.innerHeight - 10) {
+                        square.vy *= -1; 
+                    }
+
+                    sq.style.left = square.x + 'px';
+                    sq.style.top = square.y + 'px';
+                }
+                
+            });
+            
+            /*
+            x += vx;
+            y += vy;
+    
+            // Check for collisions with edges
+            if (x <= 0 || x >= window.innerWidth - 10) {
+                vx *= -1; // Reverse velocity
+            }
+            if (y <= 50 || y >= window.innerHeight - 10) {
+                vy *= -1; // Reverse velocity
+            }
+        
+            // Update position
+            square.style.left = x + 'px';
+            square.style.top = y + 'px';
+            */
+        }
+    
+        // Update position every 10 milliseconds
+        setInterval(update, 10);
+    </script>
 </body>
 </html>
