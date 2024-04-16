@@ -81,15 +81,87 @@
         opacity: 30%;
     }
 
+    /* Style for the background overlay */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black */
+    backdrop-filter: blur(5px); /* apply blur effect to background */
+    z-index: 9998; /* place it below the popup */
+}
+
+/* Style for the popup container */
+.popup-container {
+    display: none;
+    position: fixed;
+    top: 35%; /* position 35% from the top of the viewport */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%; /* occupy 60% of the viewport width */
+    max-width: 400px; /* set maximum width */
+    padding: 20px;
+    background-color: white;
+    border: 2px solid orange;
+    border-radius: 10px;
+    z-index: 9999;
+}
+
+/* Style for the close button */
+.close-btn {
+    color: black;
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Style for the form */
+.contact-form {
+    text-align: center;
+}
+
+/* Style for the form elements */
+.contact-form input[type="text"], 
+.contact-form input[type="email"],
+.contact-form textarea {
+    width: calc(100% - 20px); /* subtract padding */
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* include padding and border in the width */
+    font-family: monospace;
+}
+
+.contact-form input[type="button"] {
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: monospace;
+}
+
+.contact-form input[type="submit"]:hover {
+    background-color: darkorange;
+}
+
+h2{
+    font-family: monospace;
+}
+
   </style>
 </head>
 <body>
     <div class="header">
         <ul>
             <li><a href="#home">Home</a></li>
-            <li><a href="#news">News</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="#about">About</a></li>
+            <li><a href="#" onClick="togglePopup()">Contact</a></li>
           </ul>
     </div>
     <div class="flex-container">
@@ -105,6 +177,22 @@
     <div class="square" id="square3"></div>
     <div class="square" id="square4"></div>
     <div class="square" id="square5"></div>
+
+    <div id="overlay" class="overlay"></div>
+
+    <div id="popup" class="popup-container">
+        <span class="close-btn" onclick="togglePopup()">&times;</span>
+        <div class="contact-form">
+            <h2>Contact Us</h2>
+            <form action="#" method="post">
+                <input type="text" id="name" name="name" placeholder="Your Name" required><br>
+                <input type="email" id="email" name="email" placeholder="Your Email" required><br>
+                <textarea name="message" id="message" placeholder="Your Message" rows="4" required></textarea><br>
+                <input type="button" value="Submit" onclick="submitForm()">
+            </form>
+        </div>
+    </div>
+    
 
     <script>
         // Get the square element
@@ -132,9 +220,7 @@
         function getRandomInt(max) {
           return Math.floor(Math.random() * max);
         }
-
     
-        // Function to update position and check for collisions
         function update() {
 
             squares.forEach(square => {
@@ -156,28 +242,36 @@
                     sq.style.top = square.y + 'px';
                 }
                 
-            });
-            
-            /*
-            x += vx;
-            y += vy;
-    
-            // Check for collisions with edges
-            if (x <= 0 || x >= window.innerWidth - 10) {
-                vx *= -1; // Reverse velocity
-            }
-            if (y <= 50 || y >= window.innerHeight - 10) {
-                vy *= -1; // Reverse velocity
-            }
-        
-            // Update position
-            square.style.left = x + 'px';
-            square.style.top = y + 'px';
-            */
+            });            
         }
     
-        // Update position every 10 milliseconds
         setInterval(update, 10);
+
+        async function submitForm(){
+
+            await fetch("https://hooks.zapier.com/hooks/catch/721882/3n5uf2i/", {
+            method: "POST",
+            body: JSON.stringify({
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                message: document.getElementById("message").value
+            }),
+            }).then(i=>{
+                this.togglePopup();
+            });
+        }
+
+        function togglePopup() {
+            var overlay = document.getElementById('overlay');
+            var popup = document.getElementById('popup');
+            if (overlay.style.display === 'none' || overlay.style.display === '') {
+                overlay.style.display = 'block';
+                popup.style.display = 'block';
+            } else {
+                overlay.style.display = 'none';
+                popup.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
